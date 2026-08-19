@@ -1,0 +1,13 @@
+services:
+  chronos:
+    build: ./backend
+    environment:
+      DATABASE_URL: sqlite:////data/chronos.db
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      MODEL_NAME: ${MODEL_NAME:-gpt-4o-mini}
+    ports:
+      - "8000:8000"
+    volumes:
+      - chronos_data:/data
+volumes:
+  chronos_data:

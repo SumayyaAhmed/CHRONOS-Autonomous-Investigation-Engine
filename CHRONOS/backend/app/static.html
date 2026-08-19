@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CHRONOS</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f6ff;color:#171b35;font-family:Inter,Segoe UI,Arial}
+header{height:72px;background:#171a3a;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 5%}
+.logo{font-weight:900;font-size:25px}.tag{opacity:.7}
+main{max-width:1250px;margin:28px auto;padding:0 20px}
+.card{background:white;border-radius:18px;padding:24px;box-shadow:0 10px 35px rgba(22,28,70,.08);margin-bottom:20px}
+h1{font-size:34px;margin:0 0 8px}h2{margin-top:0}
+textarea{width:100%;height:110px;border:1px solid #dfe3f2;border-radius:13px;padding:15px;font-size:16px;resize:vertical}
+button{border:0;border-radius:11px;padding:12px 18px;background:#6257ff;color:#fff;font-weight:800;margin-top:12px;cursor:pointer}
+button.alt{background:#edf0ff;color:#37309b}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.metric{padding:18px;background:#f4f3ff;border-radius:14px}.metric b{font-size:25px;display:block}
+.hyp{border:1px solid #e6e8f5;padding:15px;border-radius:13px;margin:10px 0}
+.bar{height:8px;background:#e9eaf5;border-radius:10px;overflow:hidden}.bar i{display:block;height:100%;background:#6257ff}
+.timeline{border-left:3px solid #6257ff;padding-left:20px}.event{margin:18px 0}
+small{color:#70758f}pre{white-space:pre-wrap;line-height:1.6}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="logo">🏛 CHRONOS</div><div class="tag">Autonomous Historical Investigation</div></header>
+<main>
+<section class="card">
+<h1>Start Investigation</h1>
+<p>Ask a complex historical question. CHRONOS will plan, research, compare hypotheses, detect contradictions and synthesize a report.</p>
+<textarea id="q" placeholder="Why did the Western Roman Empire decline?"></textarea>
+<button onclick="run()">Run Investigation</button>
+</section>
+<div id="results"></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+async function run(){
+ const q=$('q').value.trim(); if(!q)return alert('Enter a question.');
+ $('results').innerHTML='<div class="card"><h2>🔎 Investigation running...</h2><p>Planner → Research → Hypotheses → Contradiction → Timeline → Synthesis</p></div>';
+ const r=await fetch('/api/investigations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q})});
+ const d=await r.json(); render(d);
+}
+function render(d){
+ $('results').innerHTML=`
+ <div class="grid">
+  <div class="metric"><small>Evidence</small><b>${d.evidence.length}</b></div>
+  <div class="metric"><small>Hypotheses</small><b>${d.hypotheses.length}</b></div>
+  <div class="metric"><small>Timeline Events</small><b>${d.timeline.length}</b></div>
+ </div>
+ <div class="card"><h2>🧭 Investigation Plan</h2>${d.plan.map(p=>`<div class="hyp"><b>${p.area}</b><br>${p.task}</div>`).join('')}</div>
+ <div class="card"><h2>⚖️ Competing Hypotheses</h2>${d.hypotheses.map(h=>`<div class="hyp"><b>${h.name}</b><br>Support: ${Math.round(h.support*100)}% · Contradiction: ${Math.round(h.contradiction*100)}%<div class="bar"><i style="width:${h.support*100}%"></i></div></div>`).join('')}</div>
+ <div class="card"><h2>📚 Evidence</h2>${d.evidence.map(e=>`<div class="hyp"><b>${e.id}: ${e.claim}</b><br><small>${e.source} · ${e.source_type} · reliability ${Math.round(e.reliability*100)}%</small></div>`).join('')}</div>
+ <div class="card"><h2>🕰 Timeline</h2><div class="timeline">${d.timeline.map(e=>`<div class="event"><b>${e.year} — ${e.title}</b><br>${e.description}</div>`).join('')}</div></div>
+ <div class="card"><h2>⚔️ Contradiction Analysis</h2>${d.contradictions.map(c=>`<div class="hyp"><b>${c.hypothesis}</b><br>Challenging evidence: ${c.challenging_evidence.join(', ')||'None directly found'}</div>`).join('')}</div>
+ <div class="card"><h2>📄 Final Report</h2><pre>${d.report}</pre><button onclick="review('${d.id}',true)">Approve Investigation</button> <button class="alt" onclick="review('${d.id}',false)">Request More Evidence</button></div>`;
+}
+async function review(id,approved){
+ const instruction=approved?'':'Please investigate the weakest hypothesis with more evidence.';
+ const r=await fetch('/api/investigations/'+id+'/review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({approved,instruction})});
+ const d=await r.json(); alert('Investigation status: '+d.status);
+}
+</script>
+</body></html>
