@@ -1,6 +1,6 @@
-# CHRONOS — Autonomous AI Platform for Evidence-Based Research & Investigation
+# CHRONOS — Autonomous AI Platform for Evidence-Based Investigation
 
-CHRONOS is an agentic AI research and investigation platform designed to investigate complex questions across historical research, news and current events, academic research, market intelligence, and general information analysis. Instead of simply generating an answer, CHRONOS treats each question as a structured investigation: it plans research tasks, gathers evidence, compares competing explanations, identifies contradictory information, and produces an evidence-grounded report with confidence and uncertainty tracking.
+CHRONOS is an agentic AI investigation platform designed to investigate complex questions across history, news and current events, academic topics, market intelligence, and general information. Instead of simply generating an answer, CHRONOS treats each question as a structured investigation: it plans investigative tasks, gathers evidence, compares competing explanations, identifies contradictory information, and produces an evidence-grounded report with confidence and uncertainty tracking.
 
 **Investigate. Verify. Compare. Understand.**
 
@@ -8,17 +8,17 @@ CHRONOS is an agentic AI research and investigation platform designed to investi
 
 * FastAPI backend
 * LangGraph cyclic investigation workflow
-* Planner, research, timeline, political, economic, military, contradiction and synthesis agents
+* Planner, investigation, timeline, political, economic, military, contradiction and synthesis agents
 * Hybrid-style retrieval interface with local knowledge base
 * SQLite by default for zero-setup local execution
 * PostgreSQL + pgvector Docker profile for production-style deployment
 * Evidence, claims, hypotheses and source metadata
 * Human-in-the-loop review endpoint
-* MCP-style research tool server
+* MCP-style investigation tool server
 * React-style single-page dashboard (no build step required)
 * Docker configuration
 * Evaluation endpoint
-* Seed research dataset
+* Seed evidence dataset
 
 ## Quickest Run
 
